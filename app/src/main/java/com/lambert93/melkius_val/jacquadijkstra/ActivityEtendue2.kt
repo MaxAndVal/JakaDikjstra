@@ -68,6 +68,7 @@ class ActivityEtendue2 : AppCompatActivity(){
     }
 
     private fun getAllArc(db: AppDatabase): List<GEO_ARC> {
+        Log.d("Function", "getAllarc")
         return db.GeoArcDao().getAll()
     }
 }
