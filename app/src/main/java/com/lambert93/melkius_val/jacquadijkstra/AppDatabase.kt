@@ -1,12 +1,12 @@
 package com.lambert93.melkius_val.jacquadijkstra
 
-import android.arch.persistence.room.Room
-import android.arch.persistence.room.RoomDatabase
 import android.arch.persistence.room.Database
+import android.arch.persistence.room.RoomDatabase
 import android.content.Context
+import com.huma.room_for_asset.RoomAsset
 
 
-@Database(entities = arrayOf(GEO_ARC::class), version = 1)
+@Database(entities = [GEO_ARC::class], version = 2)
 abstract class AppDatabase : RoomDatabase() {
 
     abstract fun GeoArcDao(): GeoArcDao
@@ -17,12 +17,9 @@ abstract class AppDatabase : RoomDatabase() {
 
         fun getAppDatabase(context: Context): AppDatabase? {
             if (INSTANCE == null) {
-                INSTANCE =
-                        Room.databaseBuilder(context.getApplicationContext(), AppDatabase::class.java, "sqlite")
-                            // allow queries on the main thread.
-                            // Don't do this on a real app! See PersistenceBasicSample for an example.
-                            .allowMainThreadQueries()
-                            .build()
+                INSTANCE = RoomAsset.databaseBuilder(context, AppDatabase::class.java, "sqlite.db")
+                    .allowMainThreadQueries()
+                    .build()
             }
             return INSTANCE
         }

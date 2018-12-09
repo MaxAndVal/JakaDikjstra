@@ -1,10 +1,5 @@
 package com.lambert93.melkius_val.jacquadijkstra
 
-<<<<<<< HEAD
-=======
-import android.arch.persistence.room.RoomDatabase
-import android.support.v7.app.AppCompatActivity
->>>>>>> edc269e3fd028fd750fed7e1ce45674c2d3d729d
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.util.Log
