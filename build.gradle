@@ -13,13 +13,22 @@ buildscript {
         // NOTE: Do not place your application dependencies here; they belong
         // in the individual module build.gradle files
     }
+    ext{
+        buildToolsVersion = "25.0.2"
+        supportLibVersion = "25.3.1"
+        archRoomVersion = "1.0.0-alpha1"
+    }
 }
 
 allprojects {
     repositories {
         google()
         jcenter()
+<<<<<<< HEAD
         maven { url "https://jitpack.io" }
+=======
+        maven { url 'https://maven.google.com' }
+>>>>>>> edc269e3fd028fd750fed7e1ce45674c2d3d729d
     }
 }
 

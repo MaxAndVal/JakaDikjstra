@@ -1,18 +1,34 @@
 package com.lambert93.melkius_val.jacquadijkstra
 
+<<<<<<< HEAD
+=======
+import android.arch.persistence.room.RoomDatabase
+import android.support.v7.app.AppCompatActivity
+>>>>>>> edc269e3fd028fd750fed7e1ce45674c2d3d729d
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.util.Log
 import kotlinx.android.synthetic.main.activity_etendue2.*
 
-class ActivityEtendue2 : AppCompatActivity() {
+class ActivityEtendue2 : AppCompatActivity(){
+
 
     private var nodes: MutableList<Vertex>? = null
     private var edges: MutableList<Edge>? = null
+    lateinit var db: AppDatabase
+    lateinit var listGeo: List<GEO_ARC>
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_etendue2)
+
+        db = AppDatabase.getAppDatabase(this)!!
+
+        listGeo = getAllArc(db)
+
+
+
+        Log.d("madatabase : ", "$listGeo")
 
         nodes = ArrayList()
         edges = ArrayList()
@@ -54,5 +70,9 @@ class ActivityEtendue2 : AppCompatActivity() {
     ) {
         val lane = Edge(laneId, nodes!!.get(sourceLocNo), nodes!![destLocNo], duration)
         edges?.add(lane)
+    }
+
+    private fun getAllArc(db: AppDatabase): List<GEO_ARC> {
+        return db.GeoArcDao().getAll()
     }
 }
