@@ -1,12 +1,14 @@
 package com.lambert93.melkius_val.jacquadijkstra
 
+import android.arch.persistence.db.SupportSQLiteDatabase
 import android.arch.persistence.room.Database
 import android.arch.persistence.room.RoomDatabase
+import android.arch.persistence.room.migration.Migration
 import android.content.Context
 import com.huma.room_for_asset.RoomAsset
 
 
-@Database(entities = [GEO_ARC::class], version = 2)
+@Database(entities = [GEO_ARC::class], version = 1)
 abstract class AppDatabase : RoomDatabase() {
 
     abstract fun GeoArcDao(): GeoArcDao
@@ -17,7 +19,7 @@ abstract class AppDatabase : RoomDatabase() {
 
         fun getAppDatabase(context: Context): AppDatabase? {
             if (INSTANCE == null) {
-                INSTANCE = RoomAsset.databaseBuilder(context, AppDatabase::class.java, "sqlite.db")
+                INSTANCE = RoomAsset.databaseBuilder(context, AppDatabase::class.java, "test.db")
                     .allowMainThreadQueries()
                     .build()
             }
@@ -28,5 +30,6 @@ abstract class AppDatabase : RoomDatabase() {
             INSTANCE = null
         }
     }
+
 
 }
