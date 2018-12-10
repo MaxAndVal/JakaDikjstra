@@ -10,18 +10,16 @@ class ActivityEtendue2 : AppCompatActivity(){
 
     private var nodes: MutableList<Vertex>? = null
     private var edges: MutableList<Edge>? = null
-    lateinit var db: AppDatabase
+    lateinit var db: SIG_DataBase
     lateinit var listGeo: List<GEO_ARC>
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_etendue2)
 
-        db = AppDatabase.getAppDatabase(this)!!
+        db = SIG_DataBase.getSIGDataBase(this)!!
 
         listGeo = getAllArc(db)
-
-
 
         Log.d("madatabase : ", "$listGeo")
 
@@ -67,7 +65,7 @@ class ActivityEtendue2 : AppCompatActivity(){
         edges?.add(lane)
     }
 
-    private fun getAllArc(db: AppDatabase): List<GEO_ARC> {
+    private fun getAllArc(db: SIG_DataBase): List<GEO_ARC> {
         Log.d("Function", "getAllarc")
         return db.GeoArcDao().getAll()
     }

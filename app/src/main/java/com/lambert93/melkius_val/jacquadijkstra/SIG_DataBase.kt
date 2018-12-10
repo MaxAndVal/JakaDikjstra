@@ -6,19 +6,20 @@ import android.content.Context
 import com.huma.room_for_asset.RoomAsset
 
 
-@Database(entities = [GEO_ARC::class], version = 2)
-abstract class AppDatabase : RoomDatabase() {
+@Database(entities = [GEO_ARC::class], version = 1, exportSchema = false)
+abstract class SIG_DataBase : RoomDatabase() {
 
     abstract fun GeoArcDao(): GeoArcDao
 
     companion object {
 
-        private var INSTANCE: AppDatabase? = null
+        private var INSTANCE: SIG_DataBase? = null
 
-        fun getAppDatabase(context: Context): AppDatabase? {
+        fun getSIGDataBase(context: Context): SIG_DataBase? {
             if (INSTANCE == null) {
-                INSTANCE = RoomAsset.databaseBuilder(context, AppDatabase::class.java, "sqlite.db")
+                INSTANCE = RoomAsset.databaseBuilder(context, SIG_DataBase::class.java, "lp_iem_sig.db")
                     .allowMainThreadQueries()
+                    .fallbackToDestructiveMigration()
                     .build()
             }
             return INSTANCE
@@ -27,6 +28,7 @@ abstract class AppDatabase : RoomDatabase() {
         fun destroyInstance() {
             INSTANCE = null
         }
+
     }
 
 }
