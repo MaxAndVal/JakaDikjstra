@@ -1,15 +1,18 @@
 package com.lambert93.melkius_val.jacquadijkstra
 
+import android.arch.persistence.db.SupportSQLiteDatabase
 import android.arch.persistence.room.Database
 import android.arch.persistence.room.RoomDatabase
+import android.arch.persistence.room.migration.Migration
 import android.content.Context
 import com.huma.room_for_asset.RoomAsset
 
 
-@Database(entities = [GEO_ARC::class], version = 1, exportSchema = false)
+@Database(entities = [GEO_ARC::class, GEO_POINT::class], version = 2,  exportSchema = false)
 abstract class SIG_DataBase : RoomDatabase() {
 
     abstract fun GeoArcDao(): GeoArcDao
+    abstract fun GeoPointDao(): GeoPointDao
 
     companion object {
 
@@ -29,6 +32,11 @@ abstract class SIG_DataBase : RoomDatabase() {
             INSTANCE = null
         }
 
+        val MIGRATION_1_3 = object : Migration(1, 3) {
+            override fun migrate(database: SupportSQLiteDatabase) {
+
+            }
+        }
     }
 
 }
