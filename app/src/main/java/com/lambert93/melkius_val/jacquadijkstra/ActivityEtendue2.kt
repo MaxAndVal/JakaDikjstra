@@ -13,7 +13,7 @@ class ActivityEtendue2 : AppCompatActivity(), AdapterView.OnItemSelectedListener
     lateinit var db: SIG_DataBase
     private var listGeoArc: List<GEO_ARC> = ArrayList<GEO_ARC>()
     private var listGeoPoint: List<GEO_POINT> = ArrayList<GEO_POINT>()
-    private lateinit var adapter: ArrayAdapter<String>
+    private var spinnerItems = ArrayList<String>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -33,23 +33,27 @@ class ActivityEtendue2 : AppCompatActivity(), AdapterView.OnItemSelectedListener
             listPointLine1.add(listGeoPoint[i])
         }
 
-        Log.d("VertexDBSize", "arc size = ${listGeoArc}")
-        Log.d("VertexDBSize", "vertex size = ${listGeoPoint}")
+        Log.d("VertexDBSize", "arc size = $listGeoArc")
+        Log.d("VertexDBSize", "vertex size = $listGeoPoint")
 
+        for ((itemPos, item) in listGeoPoint.withIndex()) {
+            spinnerItems.add(itemPos, item.nom)
+        }
+
+        spinner_start.adapter = ArrayAdapter(this, android.R.layout.simple_spinner_item, spinnerItems)
+        spinner_end.adapter = ArrayAdapter(this, android.R.layout.simple_spinner_item, spinnerItems)
+
+        btn_dj.setOnClickListener { execDijkstra(Graph(listGeoPoint, listGeoArc)) }
 
         // Lets check from location Loc_1 to Loc_10
-        val graph = Graph(listGeoPoint, listGeoArc)
+        /*val graph = Graph(listGeoPoint, listGeoArc)
         val dijkstra = DijkstraAlgorithm(graph)
-        dijkstra.execute(listPointLine1[0])
-        val path = dijkstra.getPath(listPointLine1[27])
+        dijkstra.execute(listPointLine1.find { it.nom == spinner_start.selectedItem }!!)
+        val path = dijkstra.getPath(listPointLine1.find { it.nom == spinner_end.selectedItem }!!)
 
-        var spinnerList: MutableList<String> = ArrayList()
-        var stringPath: String = ""
-        var i = 0
+        var stringPath = ""
         for (spot in path!!) {
             stringPath+=spot.nom
-            spinnerList.add(i, spot.nom)
-            i++
             stringPath+=" / "
         }
 
@@ -58,6 +62,29 @@ class ActivityEtendue2 : AppCompatActivity(), AdapterView.OnItemSelectedListener
             hello.text = String.format("%s / %s", hello.text, vertex.toString())
         }*/
 
+        hello.text = stringPath*/
+    }
+
+    private fun execDijkstra(graph: Graph) {
+        val dijkstra = DijkstraAlgorithm(graph)
+        dijkstra.execute(graph.vertexes.find { it.nom == spinner_start.selectedItem }!!)
+        var path = dijkstra.getPath(graph.vertexes.find { it.nom == spinner_end.selectedItem }!!)
+
+        if (path == null) {
+            dijkstra.execute(graph.vertexes.find { it.nom == spinner_end.selectedItem }!!)
+            path = dijkstra.getPath(graph.vertexes.find { it.nom == spinner_start.selectedItem }!!)
+            path?.reverse()
+        }
+
+        var stringPath = ""
+        if (path != null) {
+            for (spot in path!!) {
+                stringPath+=spot.nom
+                stringPath+=" / "
+            }
+        }
+
+        if (stringPath == "") stringPath = "Aucun itinéraire trouvé entre les deux destinations"
         hello.text = stringPath
     }
 
