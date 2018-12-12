@@ -33,59 +33,118 @@ class DijkstraAlgorithm(graph: Graph) {
         }
     }
 
-    private fun findMinimalDistances(node: GEO_POINT?) {
+    /*public void execute(Vertex source) {
+        settledNodes = new HashSet<Vertex>();
+        unSettledNodes = new HashSet<Vertex>();
+        distance = new HashMap<Vertex, Integer>();
+        predecessors = new HashMap<Vertex, Vertex>();
+        distance.put(source, 0);
+        unSettledNodes.add(source);
+        while (unSettledNodes.size() > 0) {
+            Vertex node = getMinimum(unSettledNodes);
+            settledNodes.add(node);
+            unSettledNodes.remove(node);
+            findMinimalDistances(node);
+        }
+    }*/
+
+    private fun findMinimalDistances(node: GEO_POINT) {
         val adjacentNodes = getNeighbors(node)
         for (target in adjacentNodes) {
             if (getShortestDistance(target) > getShortestDistance(node) + getDistance(node, target)) {
                 distance!![target] = getShortestDistance(node) + getDistance(node, target)
-                predecessors?.set(target, node!!)
+                predecessors?.put(target, node)
                 unSettledNodes!!.add(target)
             }
         }
-
     }
 
-    private fun getDistance(node: GEO_POINT?, target: GEO_POINT): Float {
+    /*private void findMinimalDistances(Vertex node) {
+        List<Vertex> adjacentNodes = getNeighbors(node);
+        for (Vertex target : adjacentNodes) {
+            if (getShortestDistance(target) > getShortestDistance(node)
+                    + getDistance(node, target)) {
+                distance.put(target, getShortestDistance(node)
+                        + getDistance(node, target));
+                predecessors.put(target, node);
+                unSettledNodes.add(target);
+            }
+        }
+
+    }*/
+
+    private fun getDistance(node: GEO_POINT, target: GEO_POINT): Float {
         for (edge in edges) {
-            if (edge.deb == node?.id && edge.fin == target.id) {
+            if (edge.deb == node.id && edge.fin == target.id) {
                 return edge.distance
             }
         }
         throw RuntimeException("Should not happen")
     }
 
-    private fun getNeighbors(node: GEO_POINT?): List<GEO_POINT> {
+    /*private int getDistance(Vertex node, Vertex target) {
+        for (Edge edge : edges) {
+            if (edge.getSource().equals(node)
+                    && edge.getDestination().equals(target)) {
+                return edge.getWeight();
+            }
+        }
+        throw new RuntimeException("Should not happen");
+    }
+*/
+
+    private fun getNeighbors(node: GEO_POINT): List<GEO_POINT> {
         val neighbors = ArrayList<GEO_POINT>()
         for (edge in edges) {
-            if (edge.deb == node?.id && !isSettled(node)) {
+            if (edge.deb == node.id && !isSettled(nodes[edge.fin])) {
                 neighbors.add(node)
             }
         }
         return neighbors
     }
 
-    private fun getMinimum(vertexes: Set<GEO_POINT>): GEO_POINT? {
+    /*private List<Vertex> getNeighbors(Vertex node) {
+        List<Vertex> neighbors = new ArrayList<Vertex>();
+        for (Edge edge : edges) {
+            if (edge.getSource().equals(node)
+                    && !isSettled(edge.getDestination())) {
+                neighbors.add(edge.getDestination());
+            }
+        }
+        return neighbors;
+    }*/
+
+    private fun getMinimum(values: Set<GEO_POINT>): GEO_POINT? {
         var minimum: GEO_POINT? = null
-        for (vertex in vertexes) {
+        for (value in values) {
             if (minimum == null) {
-                minimum = vertex
+                minimum = value
             } else {
-                if (getShortestDistance(vertex) < getShortestDistance(minimum)) {
-                    minimum = vertex
+                if (getShortestDistance(value) < getShortestDistance(minimum)) {
+                    minimum = value
                 }
             }
         }
         return minimum
     }
 
-    private fun isSettled(vertex: GEO_POINT): Boolean {
-        return settledNodes!!.contains(vertex)
+    private fun isSettled(point: GEO_POINT): Boolean {
+        return settledNodes?.contains(point)!!
     }
 
     private fun getShortestDistance(destination: GEO_POINT?): Float {
         val d = distance!![destination]
         return d ?: Float.MAX_VALUE
     }
+
+    /*private int getShortestDistance(Vertex destination) {
+        Integer d = distance.get(destination);
+        if (d == null) {
+            return Integer.MAX_VALUE;
+        } else {
+            return d;
+        }
+    }*/
 
     /*
      * This method returns the path from the source to the selected target and
@@ -104,8 +163,25 @@ class DijkstraAlgorithm(graph: Graph) {
             path.add(step)
         }
         // Put it into the correct order
-        Collections.reverse(path)
+        path.reverse()
         return path
     }
+
+    /*public LinkedList<Vertex> getPath(Vertex target) {
+        LinkedList<Vertex> path = new LinkedList<Vertex>();
+        Vertex step = target;
+        // check if a path exists
+        if (predecessors.get(step) == null) {
+            return null;
+        }
+        path.add(step);
+        while (predecessors.get(step) != null) {
+            step = predecessors.get(step);
+            path.add(step);
+        }
+        // Put it into the correct order
+        Collections.reverse(path);
+        return path;
+    }*/
 
 }
