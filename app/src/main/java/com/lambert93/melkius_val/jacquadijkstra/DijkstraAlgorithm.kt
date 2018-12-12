@@ -79,7 +79,8 @@ class DijkstraAlgorithm(graph: Graph) {
                 return edge.distance
             }
         }
-        throw RuntimeException("Should not happen")
+        //throw RuntimeException("Should not happen")
+        return 0.0f
     }
 
     /*private int getDistance(Vertex node, Vertex target) {
@@ -96,8 +97,14 @@ class DijkstraAlgorithm(graph: Graph) {
     private fun getNeighbors(node: GEO_POINT): List<GEO_POINT> {
         val neighbors = ArrayList<GEO_POINT>()
         for (edge in edges) {
-            if (edge.deb == node.id && !isSettled(nodes[edge.fin])) {
-                neighbors.add(node)
+            var nodeEnd: GEO_POINT? = null
+            for (node in nodes) {
+                if (node.id == edge.fin) {
+                    nodeEnd = node
+                }
+            }
+            if (edge.deb == node.id && !isSettled(nodeEnd)) {
+                neighbors.add(nodeEnd!!)
             }
         }
         return neighbors
@@ -128,7 +135,7 @@ class DijkstraAlgorithm(graph: Graph) {
         return minimum
     }
 
-    private fun isSettled(point: GEO_POINT): Boolean {
+    private fun isSettled(point: GEO_POINT?): Boolean {
         return settledNodes?.contains(point)!!
     }
 
