@@ -1,18 +1,32 @@
 package com.lambert93.melkius_val.jacquadijkstra
 
+import android.Manifest
+import android.annotation.SuppressLint
+import android.content.pm.PackageManager
+import android.os.Build
 import android.os.Bundle
+import android.support.v4.app.ActivityCompat
 import android.support.v7.app.AppCompatActivity
 import android.util.Log
 import android.view.View
 import android.widget.AdapterView
+import android.support.v4.content.ContextCompat
 import android.widget.ArrayAdapter
 import kotlinx.android.synthetic.main.activity_etendue2.*
 import org.xmlpull.v1.XmlSerializer
+import android.support.v4.view.accessibility.AccessibilityEventCompat.setAction
+import com.lambert93.melkius_val.jacquadijkstra.ActivityEtendue2.Companion.REQUEST_PERMISSION
 
 
 const val TAG = "TAG_DEBUG"
 
+
+@SuppressLint("ByteOrderMark")
 class ActivityEtendue2 : AppCompatActivity(), AdapterView.OnItemSelectedListener {
+
+    companion object {
+        const val REQUEST_PERMISSION = 1
+    }
 
     lateinit var db: SIG_DataBase
     private var listGeoArc: List<GEO_ARC> = ArrayList<GEO_ARC>()
@@ -40,6 +54,39 @@ class ActivityEtendue2 : AppCompatActivity(), AdapterView.OnItemSelectedListener
         spinner_end.adapter = ArrayAdapter(this, android.R.layout.simple_spinner_item, spinnerItems)
 
         btn_dj.setOnClickListener { execDijkstra(Graph(listGeoPoint, listGeoArc)) }
+
+        btn_kml.setOnClickListener { kmlGeneration() }
+
+    }
+
+    private fun kmlGeneration() {
+        if (ContextCompat.checkSelfPermission(
+                this,
+                Manifest.permission.WRITE_EXTERNAL_STORAGE
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
+            ActivityCompat.requestPermissions(
+                this,
+                arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE),
+                REQUEST_PERMISSION
+            )
+        } else {
+            write()
+        }
+    }
+
+
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
+        when (requestCode) {
+            REQUEST_PERMISSION -> if (grantResults.size > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                write()
+            }
+        }
+    }
+
+    private fun write() {
+        //TODO Code to generate KML File
+        Log.d(TAG, "write()")
     }
 
     private fun execDijkstra(graph: Graph) {
@@ -98,7 +145,7 @@ class ActivityEtendue2 : AppCompatActivity(), AdapterView.OnItemSelectedListener
 
         /*
         <kml xmlns="http://www.opengis.net/kml/2.2">
-  <Document>
+    <Document>
     <name>KML Samples</name>
     <open>1</open>
     <description>Unleash your creativity with the help of these examples!</description>
