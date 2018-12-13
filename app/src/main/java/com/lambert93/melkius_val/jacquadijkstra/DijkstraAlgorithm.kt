@@ -14,7 +14,7 @@ class DijkstraAlgorithm(graph: Graph) {
 
     init {
         // create a copy of the array so that we can operate on this array
-        this.nodes = ArrayList(graph.vertexes)
+        this.nodes = ArrayList(graph.nodes)
         this.edges = ArrayList(graph.edges)
     }
 
@@ -57,7 +57,7 @@ class DijkstraAlgorithm(graph: Graph) {
     private fun getNeighbors(node: GEO_POINT): List<GEO_POINT> {
         val neighbors = ArrayList<GEO_POINT>()
         for (edge in edges) {
-            var nodeEnd: GEO_POINT? = nodes.find { it.id == edge.fin }
+            val nodeEnd: GEO_POINT? = nodes.find { it.id == edge.fin }
             if (edge.deb == node.id && !isSettled(nodeEnd)) {
                 neighbors.add(nodeEnd!!)
             }

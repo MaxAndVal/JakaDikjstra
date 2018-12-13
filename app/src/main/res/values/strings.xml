@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">JacquADijkstra</string>
+    <string name="no_itinerary">Aucun itinéraire trouvé entre les deux destinations</string>
 </resources>

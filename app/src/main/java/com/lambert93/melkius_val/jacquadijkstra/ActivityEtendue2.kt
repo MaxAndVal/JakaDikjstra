@@ -8,6 +8,8 @@ import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import kotlinx.android.synthetic.main.activity_etendue2.*
 
+const val TAG = "TAG_DEBUG"
+
 class ActivityEtendue2 : AppCompatActivity(), AdapterView.OnItemSelectedListener {
 
     lateinit var db: SIG_DataBase
@@ -24,20 +26,11 @@ class ActivityEtendue2 : AppCompatActivity(), AdapterView.OnItemSelectedListener
         listGeoArc = getAllArc(db)
         listGeoPoint = getAllVertex(db)
 
-        var listArcLine1: MutableList<GEO_ARC> = ArrayList()
-        for (i in 184..210) {
-            listArcLine1.add(listGeoArc[i])
-        }
-        var listPointLine1: MutableList<GEO_POINT> = ArrayList()
-        for (i in 0..27) {
-            listPointLine1.add(listGeoPoint[i])
-        }
-
-        Log.d("VertexDBSize", "arc size = $listGeoArc")
-        Log.d("VertexDBSize", "vertex size = $listGeoPoint")
+        Log.d(TAG, "geopoints : $listGeoPoint")
+        Log.d(TAG, "geoarcs: $listGeoArc")
 
         for ((itemPos, item) in listGeoPoint.withIndex()) {
-            spinnerItems.add(itemPos, item.nom)
+            spinnerItems.add(itemPos, "Ligne ${item.partition} : ${item.nom}")
         }
 
         spinner_start.adapter = ArrayAdapter(this, android.R.layout.simple_spinner_item, spinnerItems)
@@ -48,12 +41,12 @@ class ActivityEtendue2 : AppCompatActivity(), AdapterView.OnItemSelectedListener
 
     private fun execDijkstra(graph: Graph) {
         val dijkstra = DijkstraAlgorithm(graph)
-        dijkstra.execute(graph.vertexes.find { it.nom == spinner_start.selectedItem }!!)
-        var path = dijkstra.getPath(graph.vertexes.find { it.nom == spinner_end.selectedItem }!!)
+        dijkstra.execute(graph.nodes.find { "Ligne ${it.partition} : ${it.nom}" == spinner_start.selectedItem }!!)
+        var path = dijkstra.getPath(graph.nodes.find { "Ligne ${it.partition} : ${it.nom}" == spinner_end.selectedItem }!!)
 
         if (path == null) {
-            dijkstra.execute(graph.vertexes.find { it.nom == spinner_end.selectedItem }!!)
-            path = dijkstra.getPath(graph.vertexes.find { it.nom == spinner_start.selectedItem }!!)
+            dijkstra.execute(graph.nodes.find { "Ligne ${it.partition} : ${it.nom}" == spinner_end.selectedItem }!!)
+            path = dijkstra.getPath(graph.nodes.find { "Ligne ${it.partition} : ${it.nom}" == spinner_start.selectedItem }!!)
             path?.reverse()
         }
 
@@ -65,7 +58,7 @@ class ActivityEtendue2 : AppCompatActivity(), AdapterView.OnItemSelectedListener
             }
         }
 
-        if (stringPath == "") stringPath = "Aucun itinéraire trouvé entre les deux destinations"
+        if (stringPath == "") stringPath = getString(R.string.no_itinerary)
         hello.text = stringPath
     }
 
