@@ -57,12 +57,7 @@ class DijkstraAlgorithm(graph: Graph) {
     private fun getNeighbors(node: GEO_POINT): List<GEO_POINT> {
         val neighbors = ArrayList<GEO_POINT>()
         for (edge in edges) {
-            var nodeEnd: GEO_POINT? = null
-            for (node in nodes) {
-                if (node.id == edge.fin) {
-                    nodeEnd = node
-                }
-            }
+            var nodeEnd: GEO_POINT? = nodes.find { it.id == edge.fin }
             if (edge.deb == node.id && !isSettled(nodeEnd)) {
                 neighbors.add(nodeEnd!!)
             }
