@@ -44,25 +44,6 @@ class ActivityEtendue2 : AppCompatActivity(), AdapterView.OnItemSelectedListener
         spinner_end.adapter = ArrayAdapter(this, android.R.layout.simple_spinner_item, spinnerItems)
 
         btn_dj.setOnClickListener { execDijkstra(Graph(listGeoPoint, listGeoArc)) }
-
-        // Lets check from location Loc_1 to Loc_10
-        /*val graph = Graph(listGeoPoint, listGeoArc)
-        val dijkstra = DijkstraAlgorithm(graph)
-        dijkstra.execute(listPointLine1.find { it.nom == spinner_start.selectedItem }!!)
-        val path = dijkstra.getPath(listPointLine1.find { it.nom == spinner_end.selectedItem }!!)
-
-        var stringPath = ""
-        for (spot in path!!) {
-            stringPath+=spot.nom
-            stringPath+=" / "
-        }
-
-        /*for (vertex in path!!) {
-            Log.d("jqfhqjshf", vertex.toString())
-            hello.text = String.format("%s / %s", hello.text, vertex.toString())
-        }*/
-
-        hello.text = stringPath*/
     }
 
     private fun execDijkstra(graph: Graph) {
@@ -79,8 +60,8 @@ class ActivityEtendue2 : AppCompatActivity(), AdapterView.OnItemSelectedListener
         var stringPath = ""
         if (path != null) {
             for (spot in path!!) {
+                stringPath+=" -> "
                 stringPath+=spot.nom
-                stringPath+=" / "
             }
         }
 
