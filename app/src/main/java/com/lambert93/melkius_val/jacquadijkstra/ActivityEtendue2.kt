@@ -7,7 +7,7 @@ import android.view.View
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import kotlinx.android.synthetic.main.activity_etendue2.*
-import org.xmlpull.v1.XmlSerializer
+import java.util.*
 
 
 const val TAG = "TAG_DEBUG"
@@ -18,7 +18,6 @@ class ActivityEtendue2 : AppCompatActivity(), AdapterView.OnItemSelectedListener
     private var listGeoArc: List<GEO_ARC> = ArrayList<GEO_ARC>()
     private var listGeoPoint: List<GEO_POINT> = ArrayList<GEO_POINT>()
     private var spinnerItems = ArrayList<String>()
-    private lateinit var xmlSerializer: XmlSerializer
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -48,13 +47,6 @@ class ActivityEtendue2 : AppCompatActivity(), AdapterView.OnItemSelectedListener
         var path =
             dijkstra.getPath(graph.nodes.find { "Ligne ${it.partition} : ${it.nom}" == spinner_end.selectedItem }!!)
 
-//        if (path == null) {
-//            dijkstra.execute(graph.nodes.find { "Ligne ${it.partition} : ${it.nom}" == spinner_end.selectedItem }!!)
-//            path =
-//                    dijkstra.getPath(graph.nodes.find { "Ligne ${it.partition} : ${it.nom}" == spinner_start.selectedItem }!!)
-//            path?.reverse()
-//        }
-
         var kmlArgs: Array<String> = emptyArray()
         var stringPath = ""
         if (path != null) {
@@ -64,6 +56,7 @@ class ActivityEtendue2 : AppCompatActivity(), AdapterView.OnItemSelectedListener
                 stringPath += spot.nom
             }
             Log.d(TAG, "kmlArgs: ${kmlArgs[1]}")
+            generateKML(path)
         }
 
 
@@ -81,87 +74,118 @@ class ActivityEtendue2 : AppCompatActivity(), AdapterView.OnItemSelectedListener
         return db.GeoPointDao().getAll()
     }
 
-    private fun generateKML(args: Array<String>) {
+    private fun generateKML(args: LinkedList<GEO_POINT>) {
 
+
+//File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), "file.kml")
         var sb = StringBuilder()
-        sb.append("<kml xmlns=\"http://www.opengis.net/kml/2.2\">\n")
-            .append("<Document>\n")
-            .append("<name>KML Bourg-en-Bresse Bus</name>\n")
-            .append("<open>1</open>\n")
-            .append("<description>Current path between source and target bus spot selected</description>\n")
-            .append("Style id=\"downArrowIcon\"\n<IconStyle>\n<Icon>\n<href>http://maps.google.com/mapfiles/kml/pal4/icon28.png</href>\n")
-            .append("</Icon>\n</IconStyle>\n</Style>\n")
-            .append("<Folder>\n<name>Placemarks</name>\n")//TODO change with name of the spot
-            .append("<description> </description>\n")
-            .append("<LookAt>\n")
 
-        for (i in 0..15) {
-            sb.append("<longitude>-122.0839597145766</longitude>\n") //TODO change with the coords
-                .append("<latitude>37.42222904525232</latitude>\n")
-                .append("<altitude>0</altitude>\n")
-                .append("</LookAt>\n")
-        }
+        sb.append("<?xml version='1.0' encoding='UTF-8'?>\n" +
+                "<kml xmlns='http://www.opengis.net/kml/2.2'>\n" +
+                "\t\t<Document>\n" +
+                "\t\t\t<name>Mon parcours</name>\n" +
+                "\t\t\t<description>Itinéraire de ${args[0].nom} ligne ${args[0].partition} vers ${args[args.size-1].nom} ligne ${args[args.size-1].partition}</description>\n" +
+                "\t\t\t<Style id='LineGreenPoly'>\n" +
+                "\t\t\t\t<LineStyle>\n" +
+                "\t\t\t\t\t<color>7c4d10</color>\n" +
+                "\t\t\t\t\t<width>8</width>\n" +
+                "\t\t\t\t</LineStyle>\n" +
+                "\t\t\t\t<PolyStyle>\n" +
+                "\t\t\t\t\t<color>004678</color>\n" +
+                "\t\t\t\t</PolyStyle>\n" +
+                "\t\t\t</Style>\n" +
+                "\t\t\t<Placemark>\n" +
+                "\t\t\t\t<name>Mon parcours</name>\n" +
+                "\t\t\t\t<description>Itinéraire de ${args[0].nom} ligne ${args[0].partition} vers ${args[args.size-1].nom} ligne ${args[args.size-1].partition}</description>\n" +
+                "\t\t\t\t<styleUrl>#LineGreenPoly</styleUrl>\n" +
+                "\t\t\t\t<LineString>\n" +
+                "\t\t\t\t\t<extrude>1</extrude>\n" +
+                "\t\t\t\t\t<tessellate>1</tessellate>\n" +
+                "\t\t\t\t\t<altitudeMode>clampToGround</altitudeMode>\n" +
+                "\t\t\t\t\t<coordinates>\n")
+                for (arg in args) {
+                    sb.append("\t\t\t\t\t\t${arg.longitude},${arg.latitude}7\n")
+                }
+                sb.append("\t\t\t\t\t</coordinates>\n" +
+                        "\t\t\t\t</LineString>\n" +
+                        "\t\t\t</Placemark>\n" +
+                        "\t\t</Document>\n" +
+                        "</kml>")
+
+        Log.d(TAG,"KML FILE : \n $sb")
+
+    }
+
+    private fun permission() {
 
         /*
-        <kml xmlns="http://www.opengis.net/kml/2.2">
-  <Document>
-    <name>KML Samples</name>
-    <open>1</open>
-    <description>Unleash your creativity with the help of these examples!</description>
-    <Style id="downArrowIcon">
-      <IconStyle>
-        <Icon>
-          <href>http://maps.google.com/mapfiles/kml/pal4/icon28.png</href>
-        </Icon>
-      </IconStyle>
-    </Style>
+        private  void DemandeDePermission(){
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED)
+        {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                if(shouldShowRequestPermissionRationale(Manifest.permission.WRITE_EXTERNAL_STORAGE))
+                {
+                   explain();
+                }
+                else
+                {
+                    askForPermission();
+                }
+            }
+        }
+        else
+        {
+            Graphe graph = new Graphe(pointList, arcList);
+            execDjisktra(graph);
 
-        <Folder>
-      <name>Placemarks</name>
-      <description>These are just some of the different kinds of placemarks with
-        which you can mark your favorite places</description>
-      <LookAt>
-        <longitude>-122.0839597145766</longitude>
-        <latitude>37.42222904525232</latitude>
-        <altitude>0</altitude>
-        <heading>-148.4122922628044</heading>
-        <tilt>40.5575073395506</tilt>
-        <range>500.6566641072245</range>
-      </LookAt>
-      <Placemark>
-        <name>Simple placemark</name>
-        <description>Attached to the ground. Intelligently places itself at the
-          height of the underlying terrain.</description>
-        <Point>
-          <coordinates>-122.0822035425683,37.42228990140251,0</coordinates>
-        </Point>
-      </Placemark>
 
-      <Placemark>
-        <name>Line</name>
-        <visibility>0</visibility>
-        <description>Transparent purple line</description>
-        <LookAt>
-          <longitude>-112.2719329043177</longitude>
-          <latitude>36.08890633450894</latitude>
-          <altitude>0</altitude>
-          <heading>-106.8161545998597</heading>
-          <tilt>44.60763714063257</tilt>
-          <range>2569.386744398339</range>
-        </LookAt>
-        <styleUrl>#transPurpleLineGreenPoly</styleUrl>
-        <LineString>
-          <tessellate>1</tessellate>
-          <altitudeMode>absolute</altitudeMode>
-          <coordinates> -112.265654928602,36.09447672602546,2357 </coordinates>
-        </LineString>
-      </Placemark>
-    </Folder>
 
-    </kml>
-    </Document>
-    */
+            File file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS),"export.kml");
+            FileWriter fileWriter = null;
+            try {
+                fileWriter = new FileWriter(file);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            try {
 
+                if(path!= null){
+                    fileWriter.write("<?xml version='1.0' encoding='UTF-8'?>\n");
+                    fileWriter.write("<kml xmlns=\"http://www.opengis.net/kml/2.2\">\n");
+                    fileWriter.write("<Document>\n" + "<Folder>\n" + "<name>Arret de bus</name>\n");
+
+                    for (GeoPoint point : path) {
+                        fileWriter.write("<Placemark>\n");
+                        fileWriter.write("<name>" +point.getGeo_poi_nom()+ "</name>\n");
+                        fileWriter.write("<Point>\n" +
+                                "<coordinates>"+ point.getGeo_poi_longitude() +"," + point.getGeo_poi_latitude()
+                                +"</coordinates>\n" +
+                                "</Point>\n");
+                        fileWriter.write("</Placemark>\n");
+
+                    }
+                    fileWriter.write( "<Placemark>\n");
+                    fileWriter.write( "<name>Itineraire</name>\n" + "<LineString>\n" + "<coordinates>\n");
+                    for (GeoPoint point : path) {
+                        fileWriter.write(point.getGeo_poi_longitude() +"," + point.getGeo_poi_latitude()+"\n");
+                    }
+                    fileWriter.write("</coordinates>\n" + "</LineString>\n"+"</Placemark>\n");
+                    fileWriter.write("</Folder>\n" + "</Document>\n"+"</kml>");
+                }
+
+
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            try {
+                fileWriter.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+        }
+    }
+        */
     }
 
     override fun onNothingSelected(parent: AdapterView<*>?) {
