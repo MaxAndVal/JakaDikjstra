@@ -7,20 +7,7 @@ import android.view.View
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import kotlinx.android.synthetic.main.activity_etendue2.*
-import android.widget.Toast
-import com.google.common.io.Flushables.flush
-import android.R.attr.x
-import android.content.Context
-import org.xmlpull.v1.XmlPullParserException
-import org.xmlpull.v1.XmlPullParserFactory
-import android.content.Context.MODE_PRIVATE
-import android.os.Environment
-import android.os.Environment.getExternalStorageDirectory
 import org.xmlpull.v1.XmlSerializer
-import java.io.File
-import java.io.FileNotFoundException
-import java.io.FileOutputStream
-import java.io.IOException
 
 
 const val TAG = "TAG_DEBUG"
@@ -61,12 +48,6 @@ class ActivityEtendue2 : AppCompatActivity(), AdapterView.OnItemSelectedListener
         var path =
             dijkstra.getPath(graph.nodes.find { "Ligne ${it.partition} : ${it.nom}" == spinner_end.selectedItem }!!)
 
-        if (path == null) {
-            dijkstra.execute(graph.nodes.find { "Ligne ${it.partition} : ${it.nom}" == spinner_end.selectedItem }!!)
-            path =
-                    dijkstra.getPath(graph.nodes.find { "Ligne ${it.partition} : ${it.nom}" == spinner_start.selectedItem }!!)
-            path?.reverse()
-        }
 
         var kmlArgs: Array<String> = emptyArray()
         var stringPath = ""
@@ -95,6 +76,85 @@ class ActivityEtendue2 : AppCompatActivity(), AdapterView.OnItemSelectedListener
     }
 
     private fun generateKML(args: Array<String>) {
+
+        var sb = StringBuilder()
+        sb.append("<kml xmlns=\"http://www.opengis.net/kml/2.2\">\n")
+            .append("<Document>\n")
+            .append("<name>KML Bourg-en-Bresse Bus</name>\n")
+            .append("<open>1</open>\n")
+            .append("<description>Current path between source and target bus spot selected</description>\n")
+            .append("Style id=\"downArrowIcon\"\n<IconStyle>\n<Icon>\n<href>http://maps.google.com/mapfiles/kml/pal4/icon28.png</href>\n")
+            .append("</Icon>\n</IconStyle>\n</Style>\n")
+            .append("<Folder>\n<name>Placemarks</name>\n")//TODO change with name of the spot
+            .append("<description> </description>\n")
+            .append("<LookAt>\n")
+
+        for (i in 0..15) {
+            sb.append("<longitude>-122.0839597145766</longitude>\n") //TODO change with the coords
+                .append("<latitude>37.42222904525232</latitude>\n")
+                .append("<altitude>0</altitude>\n")
+                .append("</LookAt>\n")
+        }
+
+        /*
+        <kml xmlns="http://www.opengis.net/kml/2.2">
+  <Document>
+    <name>KML Samples</name>
+    <open>1</open>
+    <description>Unleash your creativity with the help of these examples!</description>
+    <Style id="downArrowIcon">
+      <IconStyle>
+        <Icon>
+          <href>http://maps.google.com/mapfiles/kml/pal4/icon28.png</href>
+        </Icon>
+      </IconStyle>
+    </Style>
+
+        <Folder>
+      <name>Placemarks</name>
+      <description>These are just some of the different kinds of placemarks with
+        which you can mark your favorite places</description>
+      <LookAt>
+        <longitude>-122.0839597145766</longitude>
+        <latitude>37.42222904525232</latitude>
+        <altitude>0</altitude>
+        <heading>-148.4122922628044</heading>
+        <tilt>40.5575073395506</tilt>
+        <range>500.6566641072245</range>
+      </LookAt>
+      <Placemark>
+        <name>Simple placemark</name>
+        <description>Attached to the ground. Intelligently places itself at the
+          height of the underlying terrain.</description>
+        <Point>
+          <coordinates>-122.0822035425683,37.42228990140251,0</coordinates>
+        </Point>
+      </Placemark>
+
+      <Placemark>
+        <name>Line</name>
+        <visibility>0</visibility>
+        <description>Transparent purple line</description>
+        <LookAt>
+          <longitude>-112.2719329043177</longitude>
+          <latitude>36.08890633450894</latitude>
+          <altitude>0</altitude>
+          <heading>-106.8161545998597</heading>
+          <tilt>44.60763714063257</tilt>
+          <range>2569.386744398339</range>
+        </LookAt>
+        <styleUrl>#transPurpleLineGreenPoly</styleUrl>
+        <LineString>
+          <tessellate>1</tessellate>
+          <altitudeMode>absolute</altitudeMode>
+          <coordinates> -112.265654928602,36.09447672602546,2357 </coordinates>
+        </LineString>
+      </Placemark>
+    </Folder>
+
+    </kml>
+    </Document>
+    */
 
     }
 

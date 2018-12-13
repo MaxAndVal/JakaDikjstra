@@ -1,6 +1,7 @@
 package com.lambert93.melkius_val.jacquadijkstra
 
 import java.util.*
+import kotlin.collections.ArrayList
 
 
 class DijkstraAlgorithm(graph: Graph) {
@@ -15,7 +16,23 @@ class DijkstraAlgorithm(graph: Graph) {
     init {
         // create a copy of the array so that we can operate on this array
         this.nodes = ArrayList(graph.nodes)
-        this.edges = ArrayList(graph.edges)
+        val edges1 = ArrayList(graph.edges)
+        val reverseEdges = ArrayList<GEO_ARC>()
+
+        //Inversion des arcs pour simuler un graph non orienté
+        for (i in 0 until edges1.size) {
+            val rev = edges1[i].copy(
+                id = edges1[i].id,
+                deb = edges1[i].fin,
+                fin = edges1[i].deb,
+                temps = edges1[i].temps,
+                distance = edges1[i].distance,
+                sens = edges1[i].sens
+            )
+            reverseEdges.add(i, rev)
+        }
+        reverseEdges.addAll(graph.edges)
+        this.edges = reverseEdges
     }
 
     fun execute(source: GEO_POINT) {
