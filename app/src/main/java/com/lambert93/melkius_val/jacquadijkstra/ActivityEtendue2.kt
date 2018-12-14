@@ -119,6 +119,7 @@ class ActivityEtendue2 : AppCompatActivity(), AdapterView.OnItemSelectedListener
                 kmlArgs += spot.nom
                 stringPath += " -> "
                 stringPath += spot.nom
+                stringPath += "(${spot.partition})"
             }
             Log.d(TAG, "kmlArgs: ${kmlArgs[1]}")
             btn_kml.isEnabled = true
@@ -184,8 +185,6 @@ class ActivityEtendue2 : AppCompatActivity(), AdapterView.OnItemSelectedListener
     }
 
     private fun BFSCall() {
-
-
         val g = BFSGraph(listGeoArc.size)
 
         for (geoArc in listGeoArc) {
@@ -193,7 +192,6 @@ class ActivityEtendue2 : AppCompatActivity(), AdapterView.OnItemSelectedListener
         }
 
         Log.d(TAG, "Following is Breadth First Traversal " + "(starting from vertex 2)")
-
         g.BFS(10)
     }
 
