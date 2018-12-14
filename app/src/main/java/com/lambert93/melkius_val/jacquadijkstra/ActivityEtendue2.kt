@@ -159,24 +159,24 @@ class ActivityEtendue2 : AppCompatActivity(), AdapterView.OnItemSelectedListener
         distance.text = "Distance de :  ${result/1000} kms"
     }
 
-    fun lat(lat: Double): Double {
+    private fun lat(lat: Double): Double {
         return lat / 180 * Math.PI
     }
 
-    fun lon(lon: Double): Double {
+    private fun lon(lon: Double): Double {
         return lon / 180 * Math.PI
     }
 
-    fun calculL(lat: Double, lon: Double): ArrayList<Double> {
+    private fun calculL(lat: Double, lon: Double): ArrayList<Double> {
         Log.i(TAG, "lat : " + lat + "lon : " + lon)
-        var L = 0.5 * ln((1 + sin(lat)) / (1 - sin(lat))) - e / 2 * ln((1 + e * sin(lat)) / (1 - e * sin(lat)))
-        var R = C * exp(-n * L)
+        val L = 0.5 * ln((1 + sin(lat)) / (1 - sin(lat))) - e / 2 * ln((1 + e * sin(lat)) / (1 - e * sin(lat)))
+        val R = C * exp(-n * L)
 
-        var GAMMA = n * (lon - GAMMA0)
+        val GAMMA = n * (lon - GAMMA0)
 
-        var Lx = Xs + (R * sin(GAMMA))
-        var Ly = Ys - (R * cos(GAMMA))
-        var result: ArrayList<Double> = ArrayList()
+        val Lx = Xs + (R * sin(GAMMA))
+        val Ly = Ys - (R * cos(GAMMA))
+        val result: ArrayList<Double> = ArrayList()
         result.add(Lx)
         result.add(Ly)
 
@@ -250,7 +250,7 @@ class ActivityEtendue2 : AppCompatActivity(), AdapterView.OnItemSelectedListener
                 "$itineraryName.kml"
             )
             val fileWriter = FileWriter(file)
-            val printWriter = PrintWriter(fileWriter);
+            val printWriter = PrintWriter(fileWriter)
             printWriter.print(itinerary)
             printWriter.close()
 
